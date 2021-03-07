@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             CountDownTheme {
                 Scaffold(
@@ -52,7 +53,9 @@ class MainActivity : AppCompatActivity() {
                         )
                     },
                     floatingActionButton = {
-                        StartEndFloatingActionButton(start = false, onClick = { /*TODO*/ })
+                        val started: Boolean by mainViewModel.started.observeAsState(false)
+
+                        StartEndFloatingActionButton(started = started, onClick = { /*TODO*/ })
                     }
                 )
                 {
@@ -170,7 +173,7 @@ fun Main(mainViewModel: MainViewModel) {
 
 @Composable
 fun StartEndFloatingActionButton(
-    start: Boolean,
+    started: Boolean,
     onClick: () -> Unit
 ) {
     FloatingActionButton(onClick = onClick) {
@@ -179,8 +182,8 @@ fun StartEndFloatingActionButton(
         ) {
             Icon(
                 imageVector = when {
-                    start -> Icons.Default.PlayArrow
-                    else -> Icons.Default.Pause
+                    started -> Icons.Default.Pause
+                    else -> Icons.Default.PlayArrow
                 },
                 contentDescription = null
             )
@@ -188,8 +191,8 @@ fun StartEndFloatingActionButton(
                 modifier = Modifier
                     .padding(start = 8.dp, top = 3.dp),
                 text = when {
-                    start -> stringResource(id = R.string.start)
-                    else -> stringResource(id = R.string.end)
+                    started -> stringResource(id = R.string.end)
+                    else -> stringResource(id = R.string.start)
                 }
             )
         }

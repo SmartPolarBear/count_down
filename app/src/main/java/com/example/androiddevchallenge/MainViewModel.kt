@@ -1,5 +1,6 @@
 package com.example.androiddevchallenge
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,6 +15,9 @@ class MainViewModel : ViewModel() {
 
     private val _seconds = MutableLiveData(0)
     val seconds: LiveData<Int> = _seconds
+
+    private val _started = MutableLiveData(false)
+    val started: LiveData<Boolean> = _started
 
     fun onHoursChange(newHours: Int) {
         _hours.value = newHours
