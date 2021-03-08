@@ -55,7 +55,8 @@ class MainActivity : AppCompatActivity() {
                     floatingActionButton = {
                         val started: Boolean by mainViewModel.started.observeAsState(false)
 
-                        StartEndFloatingActionButton(started = started, onClick = { /*TODO*/ })
+                        StartEndFloatingActionButton(started = started,
+                            onClick = { mainViewModel.toggleStartPause() })
                     }
                 )
                 {

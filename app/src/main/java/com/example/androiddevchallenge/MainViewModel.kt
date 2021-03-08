@@ -31,4 +31,27 @@ class MainViewModel : ViewModel() {
         _seconds.value = newSeconds
     }
 
+    fun toggleStartPause() {
+        if (_started.value == true) {
+            pause()
+        } else {
+            start()
+        }
+    }
+
+    fun clear() {
+        _started.value = false;
+
+        _hours.value = 0
+        _minutes.value = 0
+        _seconds.value = 0
+    }
+
+    private fun start() {
+        _started.value = true;
+    }
+
+    private fun pause() {
+        _started.value = false;
+    }
 }
