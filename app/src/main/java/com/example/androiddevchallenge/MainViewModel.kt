@@ -1,5 +1,6 @@
 package com.example.androiddevchallenge
 
+import android.os.CountDownTimer
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
@@ -7,27 +8,30 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class MainViewModel : ViewModel() {
-    private val _hours = MutableLiveData(0)
-    val hours: LiveData<Int> = _hours
+    private val _hours = MutableLiveData(0L)
+    val hours: LiveData<Long> = _hours
 
-    private val _minutes = MutableLiveData(0)
-    val minutes: LiveData<Int> = _minutes
+    private val _minutes = MutableLiveData(0L)
+    val minutes: LiveData<Long> = _minutes
 
-    private val _seconds = MutableLiveData(0)
-    val seconds: LiveData<Int> = _seconds
+    private val _seconds = MutableLiveData(0L)
+    val seconds: LiveData<Long> = _seconds
 
     private val _started = MutableLiveData(false)
     val started: LiveData<Boolean> = _started
 
-    fun onHoursChange(newHours: Int) {
+    private lateinit var _countDownTimer: CountDownTimer
+    private var _millisecondsLeft: Long = 0L
+
+    fun onHoursChange(newHours: Long) {
         _hours.value = newHours
     }
 
-    fun onMinutesChange(newMinutes: Int) {
+    fun onMinutesChange(newMinutes: Long) {
         _minutes.value = newMinutes
     }
 
-    fun onSecondsChange(newSeconds: Int) {
+    fun onSecondsChange(newSeconds: Long) {
         _seconds.value = newSeconds
     }
 
@@ -47,11 +51,44 @@ class MainViewModel : ViewModel() {
         _seconds.value = 0
     }
 
+    private fun parseHourMinuteSecondToMillisecond(): Long {
+        return 1000L * ((_hours.value?.times(3600L) ?: 0) +
+                (_minutes.value?.times(60L) ?: 0) +
+                _seconds.value!!)
+    }
+
+    private fun extractHours(milliseconds: Long): Long {
+        return (milliseconds / 1000) / 3600
+    }
+
+    private fun extractMinutes(milliseconds: Long): Long {
+        return ((milliseconds / 1000) % 3600) / 60
+    }
+
+    private fun extractSeconds(milliseconds: Long): Long {
+        return ((milliseconds / 1000) % 3600) % 60
+    }
+
     private fun start() {
+        _millisecondsLeft = parseHourMinuteSecondToMillisecond()
+
+        _countDownTimer = object : CountDownTimer(_millisecondsLeft, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                onHoursChange(extractHours(millisUntilFinished))
+            }
+
+            override fun onFinish() {
+                _started.value = false
+                clear()
+            }
+        }
+
         _started.value = true;
     }
 
     private fun pause() {
+        _countDownTimer.cancel()
+
         _started.value = false;
     }
 }
