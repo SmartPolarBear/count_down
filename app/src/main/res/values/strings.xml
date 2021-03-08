@@ -9,9 +9,13 @@
       or implied. See the License for the specific language governing permissions and limitations under
       the License.
       -->
-    <string name="app_name">AndroidDevChallenge</string>
+    <string name="app_name">Countdown</string>
     <string name="up">Up the value</string>
     <string name="down">decrease the value</string>
     <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="add1min">Add 1 Minutes</string>
     <string name="end">End</string>
+    <string name="alarm">Alarm</string>
+    <string name="stopwatch_notification_channel_description">Stopwatch alarm</string>
 </resources>

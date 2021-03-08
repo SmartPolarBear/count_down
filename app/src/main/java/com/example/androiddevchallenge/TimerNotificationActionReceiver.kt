@@ -8,10 +8,13 @@ class TimerNotificationActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             AppConstants.ACTION_STOP -> {
+
             }
             AppConstants.ACTION_ADD1MIN -> {
+
             }
             else -> {
+
             }
         }
     }

@@ -20,9 +20,6 @@ class MainViewModel : ViewModel() {
     private val _seconds = MutableLiveData(0L)
     val seconds: LiveData<Long> = _seconds
 
-    var milliseconds by mutableStateOf(0L)
-        private set
-
     private val _started = MutableLiveData(false)
     val started: LiveData<Boolean> = _started
 
@@ -44,11 +41,11 @@ class MainViewModel : ViewModel() {
     }
 
 
-    fun toggleStartPause() : Boolean? {
+    fun toggleStartPause(onTimerFinished: () -> Unit): Boolean? {
         if (_started.value == true) {
             pause()
         } else {
-            start()
+            start(onTimerFinished)
         }
 
         return started.value
@@ -62,7 +59,7 @@ class MainViewModel : ViewModel() {
         _seconds.value = 0
     }
 
-    fun parseHourMinuteSecondToMillisecond(): Long {
+    private fun parseHourMinuteSecondToMillisecond(): Long {
         return 1000L * ((_hours.value?.times(3600L) ?: 0) +
                 (_minutes.value?.times(60L) ?: 0) +
                 _seconds.value!!)
@@ -80,7 +77,7 @@ class MainViewModel : ViewModel() {
         return ((milliseconds / 1000) % 3600) % 60
     }
 
-    private fun start() {
+    private fun start(onTimerFinished: () -> Unit) {
         _millisecondsLeft = parseHourMinuteSecondToMillisecond()
 
         _countDownTimer = object : CountDownTimer(_millisecondsLeft, 1000) {
@@ -92,7 +89,7 @@ class MainViewModel : ViewModel() {
 
             override fun onFinish() {
                 _started.value = false
-
+                onTimerFinished()
                 clear()
             }
         }

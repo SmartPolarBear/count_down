@@ -40,32 +40,10 @@ import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import com.example.androiddevchallenge.ui.theme.CountDownTheme
 import androidx.compose.runtime.livedata.observeAsState
+import com.example.androiddevchallenge.util.NotificationUtil
 
 class MainActivity : AppCompatActivity() {
     private val mainViewModel by viewModels<MainViewModel>()
-
-    companion object {
-        fun setAlarm(context: Context, nowMilliseconds: Long, millisecondsRemaining: Long): Long {
-            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            val intent = Intent(context, TimerExpiredReceiver::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
-
-            val deadline = nowMilliseconds + millisecondsRemaining
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, deadline, pendingIntent)
-            return deadline
-        }
-
-        fun removeAlarm(context: Context) {
-            val intent = Intent(context, TimerExpiredReceiver::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
-            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            alarmManager.cancel(pendingIntent)
-        }
-
-        val nowMilliseconds: Long
-            @RequiresApi(Build.VERSION_CODES.N)
-            get() = Calendar.getInstance().timeInMillis
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,18 +60,13 @@ class MainActivity : AppCompatActivity() {
                     floatingActionButton = {
                         val started: Boolean by mainViewModel.started.observeAsState(false)
 
-                        StartEndFloatingActionButton(started = started,
-                            onClick = {
-                                if (mainViewModel.toggleStartPause() == true) {
-                                    setAlarm(
-                                        this,
-                                        nowMilliseconds,
-                                        mainViewModel.parseHourMinuteSecondToMillisecond()
-                                    )
-                                } else {
-                                    removeAlarm(this)
-                                }
-                            })
+                        StartEndFloatingActionButton(
+                            started = started
+                        ) {
+                            mainViewModel.toggleStartPause {
+                                NotificationUtil.showTimerExpired(this)
+                            }
+                        }
                     }
                 )
                 {
