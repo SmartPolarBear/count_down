@@ -15,9 +15,16 @@
  */
 package com.example.androiddevchallenge
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.icu.util.Calendar
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -37,6 +44,28 @@ import androidx.compose.runtime.livedata.observeAsState
 class MainActivity : AppCompatActivity() {
     private val mainViewModel by viewModels<MainViewModel>()
 
+    companion object {
+        fun setAlarm(context: Context, nowSeconds: Long, secondsRemaining: Long): Long {
+            val wakeUpTime = (nowSeconds + secondsRemaining) * 1000
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val intent = Intent(context, TimerExpiredReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, wakeUpTime, pendingIntent)
+            return wakeUpTime
+        }
+
+        fun removeAlarm(context: Context) {
+            val intent = Intent(context, TimerExpiredReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager.cancel(pendingIntent)
+        }
+
+        val nowSeconds: Long
+            @RequiresApi(Build.VERSION_CODES.N)
+            get() = Calendar.getInstance().timeInMillis / 1000
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,7 +82,17 @@ class MainActivity : AppCompatActivity() {
                         val started: Boolean by mainViewModel.started.observeAsState(false)
 
                         StartEndFloatingActionButton(started = started,
-                            onClick = { mainViewModel.toggleStartPause() })
+                            onClick = {
+                                if (mainViewModel.toggleStartPause() == true) {
+                                    setAlarm(
+                                        this,
+                                        nowSeconds,
+                                        mainViewModel.parseHourMinuteSecondToMillisecond()
+                                    )
+                                } else {
+                                    removeAlarm(this)
+                                }
+                            })
                     }
                 )
                 {
@@ -152,19 +191,19 @@ fun Main(mainViewModel: MainViewModel) {
             NumericUpDown(
                 value = hours, range = 0..23L
             ) { mainViewModel.onHoursChange(it) }
-            TimeUnitText(text = "H")
+            TimeUnitText(text = "h")
 
             val minutes by mainViewModel.minutes.observeAsState(0L)
             NumericUpDown(
                 value = minutes, range = 0..60L
             ) { mainViewModel.onMinutesChange(it) }
-            TimeUnitText(text = "M")
+            TimeUnitText(text = "m")
 
             val seconds by mainViewModel.seconds.observeAsState(0L)
             NumericUpDown(
                 value = seconds, range = 0..60L
             ) { mainViewModel.onSecondsChange(it) }
-            TimeUnitText(text = "S")
+            TimeUnitText(text = "s")
         }
     }
 
