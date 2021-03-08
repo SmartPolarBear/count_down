@@ -45,13 +45,14 @@ class MainActivity : AppCompatActivity() {
     private val mainViewModel by viewModels<MainViewModel>()
 
     companion object {
-        fun setAlarm(context: Context, nowSeconds: Long, secondsRemaining: Long): Long {
-            val wakeUpTime = (nowSeconds + secondsRemaining) * 1000
+        fun setAlarm(context: Context, nowMilliseconds: Long, millisecondsRemaining: Long): Long {
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val intent = Intent(context, TimerExpiredReceiver::class.java)
             val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, wakeUpTime, pendingIntent)
-            return wakeUpTime
+
+            val deadline = nowMilliseconds + millisecondsRemaining
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, deadline, pendingIntent)
+            return deadline
         }
 
         fun removeAlarm(context: Context) {
@@ -61,9 +62,9 @@ class MainActivity : AppCompatActivity() {
             alarmManager.cancel(pendingIntent)
         }
 
-        val nowSeconds: Long
+        val nowMilliseconds: Long
             @RequiresApi(Build.VERSION_CODES.N)
-            get() = Calendar.getInstance().timeInMillis / 1000
+            get() = Calendar.getInstance().timeInMillis
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +87,7 @@ class MainActivity : AppCompatActivity() {
                                 if (mainViewModel.toggleStartPause() == true) {
                                     setAlarm(
                                         this,
-                                        nowSeconds,
+                                        nowMilliseconds,
                                         mainViewModel.parseHourMinuteSecondToMillisecond()
                                     )
                                 } else {
