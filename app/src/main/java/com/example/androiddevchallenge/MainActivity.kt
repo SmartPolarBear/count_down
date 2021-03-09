@@ -26,6 +26,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.AnimationState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -48,9 +52,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         setContent {
             CountDownTheme {
+                val started: Boolean by mainViewModel.started.observeAsState(false)
+
+                val background by animateColorAsState(
+                    targetValue = if (started) MaterialTheme.colors.secondary
+                    else MaterialTheme.colors.secondaryVariant,
+                    animationSpec = tween(durationMillis = 500)
+                )
+
                 Scaffold(
+                    modifier = Modifier.background(background),
                     topBar = {
                         TopAppBar(
                             title = { Text(text = "Count Down") },
@@ -58,7 +72,6 @@ class MainActivity : AppCompatActivity() {
                         )
                     },
                     floatingActionButton = {
-                        val started: Boolean by mainViewModel.started.observeAsState(false)
 
                         StartEndFloatingActionButton(
                             started = started
@@ -70,7 +83,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 )
                 {
-                    Surface(color = MaterialTheme.colors.background) {
+                    Surface() {
                         Main(mainViewModel = mainViewModel)
                     }
                 }

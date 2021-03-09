@@ -55,15 +55,15 @@ class NotificationUtil {
                 notificationChannel.lightColor = Color.RED
                 notificationChannel.enableVibration(true)
                 notificationChannel.vibrationPattern = longArrayOf(
-                    100,
-                    200,
-                    300,
-                    400,
-                    500,
-                    400,
-                    300,
-                    200,
-                    400
+                    1000,
+                    1000,
+                    1000,
+                    1000,
+                    1000,
+                    1000,
+                    1000,
+                    1000,
+                    1000
                 )
                 notificationChannel.description =
                     context.getString(R.string.stopwatch_notification_channel_description)
