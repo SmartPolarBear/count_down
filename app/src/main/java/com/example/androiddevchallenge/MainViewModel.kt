@@ -1,15 +1,26 @@
+/*
+ * Copyright 2021 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.example.androiddevchallenge
 
 import android.os.CountDownTimer
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class MainViewModel : ViewModel() {
-
 
     private val _hours = MutableLiveData(0L)
     val hours: LiveData<Long> = _hours
@@ -23,10 +34,8 @@ class MainViewModel : ViewModel() {
     private val _started = MutableLiveData(false)
     val started: LiveData<Boolean> = _started
 
-
     private lateinit var _countDownTimer: CountDownTimer
     private var _millisecondsLeft: Long = 0L
-
 
     fun onHoursChange(newHours: Long) {
         _hours.value = newHours
@@ -40,7 +49,6 @@ class MainViewModel : ViewModel() {
         _seconds.value = newSeconds
     }
 
-
     fun toggleStartPause(onTimerFinished: () -> Unit): Boolean? {
         if (_started.value == true) {
             pause()
@@ -52,7 +60,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun clear() {
-        _started.value = false;
+        _started.value = false
 
         _hours.value = 0
         _minutes.value = 0
@@ -60,9 +68,11 @@ class MainViewModel : ViewModel() {
     }
 
     private fun parseHourMinuteSecondToMillisecond(): Long {
-        return 1000L * ((_hours.value?.times(3600L) ?: 0) +
+        return 1000L * (
+            (_hours.value?.times(3600L) ?: 0) +
                 (_minutes.value?.times(60L) ?: 0) +
-                _seconds.value!!)
+                _seconds.value!!
+            )
     }
 
     private fun extractHours(milliseconds: Long): Long {
@@ -94,14 +104,14 @@ class MainViewModel : ViewModel() {
             }
         }
 
-        _countDownTimer.start();
+        _countDownTimer.start()
 
-        _started.value = true;
+        _started.value = true
     }
 
     private fun pause() {
         _countDownTimer.cancel()
 
-        _started.value = false;
+        _started.value = false
     }
 }

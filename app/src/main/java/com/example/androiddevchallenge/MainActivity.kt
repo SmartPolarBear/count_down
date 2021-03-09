@@ -61,7 +61,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         setContent {
             CountDownTheme {
                 val started: Boolean by mainViewModel.started.observeAsState(false)
@@ -90,8 +89,7 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                     }
-                )
-                {
+                ) {
                     Surface() {
                         Main(mainViewModel = mainViewModel)
                     }
@@ -181,8 +179,7 @@ fun Main(mainViewModel: MainViewModel) {
                 .padding(8.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
-        )
-        {
+        ) {
             val hours by mainViewModel.hours.observeAsState(0L)
             NumericUpDown(
                 value = hours, range = 0..23L
@@ -202,10 +199,7 @@ fun Main(mainViewModel: MainViewModel) {
             TimeUnitText(text = "s")
         }
     }
-
-
 }
-
 
 @Composable
 fun StartEndFloatingActionButton(
@@ -234,7 +228,6 @@ fun StartEndFloatingActionButton(
         }
     }
 }
-
 
 @Preview("Light Theme", widthDp = 360, heightDp = 640)
 @Composable
