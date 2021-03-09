@@ -1,24 +1,16 @@
 package com.example.androiddevchallenge.util
 
-import android.annotation.TargetApi
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import com.example.androiddevchallenge.AppConstants
-import com.example.androiddevchallenge.MainActivity
 import com.example.androiddevchallenge.R
 import com.example.androiddevchallenge.TimerNotificationActionReceiver
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 class NotificationUtil {
